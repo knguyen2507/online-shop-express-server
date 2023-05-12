@@ -1,0 +1,23 @@
+[
+    {
+        "name": "Test 001",
+        "email": "test001@gmail.com",
+        "username": "test001",
+        "password": "123456",
+        "role": "Admin"
+    },
+    {
+        "name": "Test 002",
+        "email": "test002@gmail.com",
+        "username": "test002",
+        "password": "123456",
+        "role": "Guest"
+    },
+    {
+        "name": "Test 003",
+        "email": "test003@gmail.com",
+        "username": "test003",
+        "password": "123456",
+        "role": "Guest"
+    }
+]

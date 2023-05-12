@@ -1,0 +1,18 @@
+[
+    {
+        "id": "tv",
+        "name": "TV"
+    },
+    {
+        "id": "refrigerator",
+        "name": "Refrigerator"
+    },
+    {
+        "id": "washing-machine",
+        "name": "Washing Machine"
+    },
+    {
+        "id": "water-purifier-machine",
+        "name": "Water Purifier Machine"
+    }
+]

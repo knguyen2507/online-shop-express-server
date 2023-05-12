@@ -1,0 +1,42 @@
+[
+    {
+        "id": "hitachi",
+        "name": "Hitachi",
+        "image": "images/brand/hitachi.jpg"
+    },
+    {
+        "id": "panasonic",
+        "name": "Panasonic",
+        "image": "images/brand/panasonic.jpg"
+    },
+    {
+        "id": "samsung",
+        "name": "Samsung",
+        "image": "images/brand/samsung.jpg"
+    },
+    {
+        "id": "toshiba",
+        "name": "Toshiba",
+        "image": "images/brand/toshiba.jpg"
+    },
+    {
+        "id": "tcl",
+        "name": "TCL",
+        "image": "images/brand/tcl.jpg"
+    },
+    {
+        "id": "sony",
+        "name": "Sony",
+        "image": "images/brand/sony.jpg"
+    },
+    {
+        "id": "lg",
+        "name": "LG",
+        "image": "images/brand/lg.jpg"
+    },
+    {
+        "id": "karofi",
+        "name": "Karofi",
+        "image": "images/brand/hitachi.jpg"
+    }
+]
