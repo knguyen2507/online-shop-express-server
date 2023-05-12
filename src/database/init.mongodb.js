@@ -16,7 +16,7 @@ const dbBrand = require('./db/brand.db.json');
 const dbCategory = require('./db/category.db.json');
 const dbProduct = require('./db/product.db.json');
 
-const MONGO_URI = config.db;
+const MONGO_URI = `${config.db}`;
 // connect mongodb
 mongoose
     .connect(MONGO_URI)
