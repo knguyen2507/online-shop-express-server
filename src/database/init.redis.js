@@ -3,7 +3,7 @@
 const { createClient } = require('redis');
 const config = require('../api/configs/config.redis');
 
-const REDIS_URI = config.db.uri;
+const REDIS_URI = config.uri;
 
 const client= createClient({
     url: REDIS_URI
