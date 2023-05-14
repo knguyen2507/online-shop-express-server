@@ -24,9 +24,11 @@ const {
 
 const router = express.Router();
 
+console.log(`dirname product:::`, __dirname);
+
 const multerStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '/public/'));
+        cb(null, path.join(__dirname, '../../../public/'));
     },
     filename: (req, file, cb) => {
         cb(null, `uploads/products/${file.originalname}`);
