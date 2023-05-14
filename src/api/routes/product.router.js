@@ -1,8 +1,7 @@
 'use strict'
 
 const express = require('express');
-const multer = require('multer');
-const path = require('path');
+const { upload } = require('../configs/config.storedFile');
 // controllers
 const { 
     getAllProducts,
@@ -24,26 +23,7 @@ const {
 
 const router = express.Router();
 
-const multerStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../../../public/'));
-    },
-    filename: (req, file, cb) => {
-        cb(null, `uploads/products/${file.originalname}`);
-    }
-});
 
-const multerFilter = (req, file, cb) => {
-    if (file.mimetype.split('/')[1] === 'jpeg') {
-        cb(null, true);
-    } else {
-        cb(new Error('Not a JPG File!!!'), false)
-    }
-}
-const upload = multer({
-    storage: multerStorage,
-    fileFilter: multerFilter
-});
 
 router.get('/get-all-products', getAllProducts);
 router.post('/create-product', 

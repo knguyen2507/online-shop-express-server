@@ -1,11 +1,16 @@
 'use strict'
 
+
 const fs = require('fs-extra');
+const { 
+    ref,
+    deleteObject 
+} = require('firebase/storage');
+// configs
+const { storage } = require('../configs/config.storedFile');
 // models
 const _Product = require('../models/product.model');
 const _Brand = require('../models/brand.model');
-// utils
-
 
 // get all brands
 const get_all_brands = async () => {
@@ -84,7 +89,11 @@ const delete_brand = async ({id}) => {
         }
     }
     await _Brand.deleteOne({id});
-    await fs.remove(`public/${brand.image}`);
+    if (storage === false) {
+        await fs.remove(`public/${brand.image}`);
+    } else {
+        await deleteObject(ref(storage, brand.image));
+    }
     return {
         code: 201,
         message: "Brand delete Successfully!"

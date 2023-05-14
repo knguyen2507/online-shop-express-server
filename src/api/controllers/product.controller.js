@@ -1,5 +1,11 @@
 'use strict'
 
+const { 
+    ref,
+    uploadBytesResumable 
+} = require('firebase/storage');
+// configs
+const { storage } = require('../configs/config.storedFile');
 // services
 const { 
     get_all_products,
@@ -42,7 +48,17 @@ const createProduct = async (req, res) => {
         id, name, qty, category, brand, price, details
     } = req.body;
 
-    const image = req.file.path.split('\\').slice(1).join('/');
+    const image = `uploads/products/${req.file.originalname.split('.')[0]}/${req.file.originalname}`;
+
+    if (storage !== false) {
+        const storageRef = ref(storage, image);
+        const data = {
+            contentType: req.file.mimetype,
+        };
+        // Upload the file in the bucket storage
+        await uploadBytesResumable(storageRef, req.file.buffer, data);
+    }
+
     const {code, message} = await create_product({
         id, name, qty, category, brand, price, image, details
     });
