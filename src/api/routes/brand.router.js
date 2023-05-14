@@ -2,6 +2,7 @@
 
 const express = require('express');
 const multer = require('multer');
+const path = require('path');
 // controllers
 const { 
     getAllBrands,
@@ -23,7 +24,7 @@ const router = express.Router();
 
 const multerStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public');
+        cb(null, path.join(__dirname, '../../../public/'));
     },
     filename: (req, file, cb) => {
         cb(null, `uploads/products/${file.originalname}`);

@@ -9,6 +9,7 @@ const cors = require('cors');
 const db = require('./database/init.mongodb');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 // routes
 const userRouter = require('./api/routes/user.router');
 const productRouter = require('./api/routes/product.router');
@@ -25,7 +26,7 @@ app.use(morgan("dev"));
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '../public/')));
 app.use(cookieParser());
 // databases
 db;
