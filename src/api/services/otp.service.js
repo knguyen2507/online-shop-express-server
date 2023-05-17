@@ -13,18 +13,13 @@ const insertOtp = async ({otp, email}) => {
     return Otp ? 1 : 0
 };
 
-const RegisterValidOtp = async ({otp, hashOtp}) => {
+const validOtp = async ({otp, hashOtp}) => {
     const isValid = await bcrypt.compare(otp, hashOtp);
     return isValid;
 };
 
-const PasswordValidOtp = async ({otp, hashOtp}) => {
-    const isValid = await bcrypt.compare(otp, hashOtp);
-    return isValid;
-};
 
 module.exports = { 
     insertOtp, 
-    RegisterValidOtp,
-    PasswordValidOtp 
+    validOtp
 }

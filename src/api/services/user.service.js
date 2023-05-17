@@ -15,8 +15,7 @@ const {
 } = require('./jwt.service');
 const {
     insertOtp,
-    RegisterValidOtp,
-    PasswordValidOtp
+    validOtp
 } = require('../services/otp.service');
 // models
 const _User = require('../models/user.model');
@@ -167,7 +166,7 @@ const forgot_pasword = async ({ email }) => {
     const listOtp = await _Otp.find({email});
     if (listOtp.length > 2) {
         if (Date.now() - listOtp[listOtp.length - 3].createdAt < 5*60*1000 || listOtp.length > 4) {
-            // deleteMany Otp in Data
+  
             await _Otp.deleteMany({ email });
             await _BlackList.create({ email });
 
@@ -213,11 +212,11 @@ const password_verify_otp = async ({otp, password, email}) => {
     // get last otp
     const lastOtp = listOtp[listOtp.length - 1];
     // check otp is valid
-    const isValid = await RegisterValidOtp({otp, hashOtp: lastOtp.otp});
+    const isValid = await validOtp({otp, hashOtp: lastOtp.otp});
     if (!isValid) {
         if (lastOtp.wrongs > 2) {
             await _BlackList.create({ email });
-            // deleteMany Otp in Data
+
             await _Otp.deleteMany({ email });
             return {
                 code: 429,
@@ -236,6 +235,8 @@ const password_verify_otp = async ({otp, password, email}) => {
         const hashPw = await bcrypt.hash(password, 10);
 
         await _User.updateOne({email}, {$set: {password: hashPw}});
+
+        await _Otp.deleteMany({ email });
 
         return {
             code: 201,
@@ -315,7 +316,7 @@ const register_verify_otp = async ({otp, name, username, password, email}) => {
     // get last otp
     const lastOtp = listOtp[listOtp.length - 1];
     // check otp is valid
-    const isValid = await RegisterValidOtp({otp, hashOtp: lastOtp.otp});
+    const isValid = await validOtp({otp, hashOtp: lastOtp.otp});
     if (!isValid) {
         if (lastOtp.wrongs > 2) {
             await _BlackList.create({ email });
@@ -346,6 +347,10 @@ const register_verify_otp = async ({otp, name, username, password, email}) => {
         }
 
         const user = await _User.create(newUser);
+
+        if (user) {
+            await _Otp.deleteMany({ email });
+        }
 
         const cart = {
             id: user._id,
