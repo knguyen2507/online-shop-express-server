@@ -7,10 +7,14 @@ const {
     get_user_by_id,
     get_user_by_admin,
     login,
+    forgot_pasword,
+    password_verify_otp,
     logout,
     sign_up_guest,
+    register_verify_otp,
     create_user_by_admin,
-    delete_user
+    delete_user,
+    change_password
 } = require('../services/user.service');
 
 // get all users
@@ -61,6 +65,31 @@ const logIn = async (req, res) => {
         code, metadata, message
     })
 };
+// create new password
+const forgotPassword = async (req, res) => {
+    const email = req.body.email;
+    const { code, message, metadata } = await forgot_pasword({email});
+
+    return res.status(code).json({
+        code, message, metadata
+    })
+};
+// password verify otp 
+const passwordVerifyOtp = async (req, res) => {
+    const {
+        otp, password, email
+    } = req.body;
+
+    const {
+        code, message
+    } = await password_verify_otp({
+        otp, password, email
+    });
+
+    return res.status(code).json({
+        code, message
+    });
+};
 // Log out
 const logOut = async (req, res) => {
     const id = req.payload.id;
@@ -72,12 +101,28 @@ const logOut = async (req, res) => {
 };
 // register guest account
 const signUpGuest = async (req, res) => {
-    const { name, username, password, email } = req.body;
-    const { code, message, metadata } = await sign_up_guest({name, username, password, email});
+    const email = req.body.email;
+    const { code, message, metadata } = await sign_up_guest({email});
 
     return res.status(code).json({
         code, message, metadata
     })
+};
+// verify otp
+const RegisterVerifyOtp = async (req, res) => {
+    const {
+        otp, name, username, password, email
+    } = req.body;
+
+    const {
+        code, metadata, message
+    } = await register_verify_otp({
+        otp, name, username, password, email
+    });
+
+    return res.status(code).json({
+        code, metadata, message
+    });
 };
 // create user by admin rights
 const createUserByAdmin = async (req, res) => {
@@ -103,6 +148,17 @@ const deleteUser = async (req, res) => {
         code, message
     })
 }
+// change password
+const changePassword = async (req, res) => {
+    const id = req.params.id;
+    const password = req.body.password;
+
+    const { code, message } = await change_password({id, password});
+
+    return res.status(code).json({
+        code, message
+    })
+}
 
 // export module
 module.exports = {
@@ -110,8 +166,12 @@ module.exports = {
     getUserById,
     getUserByAdmin,
     logIn,
+    forgotPassword,
+    passwordVerifyOtp,
     logOut,
     signUpGuest,
+    RegisterVerifyOtp,
     createUserByAdmin,
-    deleteUser
+    deleteUser,
+    changePassword
 }

@@ -59,6 +59,5 @@ const check_access_role_admin = async (id) => {
 
 module.exports = {
     signAccessToken,
-    signRefreshToken,
-    check_access_role_admin
+    signRefreshToken
 };
