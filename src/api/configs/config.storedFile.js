@@ -11,7 +11,7 @@ const { getStorage } = require('firebase/storage');
 dotenv.config();
 
 const config = (env) => {
-    if (env === 'dev') {
+    if (env === 'dev' || env === 'pro') {
         const multerStorage = multer.diskStorage({
             destination: (req, file, cb) => {
                 cb(null, path.join(__dirname, '../../../public/'));
