@@ -114,6 +114,8 @@ const RegisterVerifyOtp = async (req, res) => {
         otp, name, username, password, email
     } = req.body;
 
+    console.log(`body:::`, req.body)
+
     const {
         code, metadata, message
     } = await register_verify_otp({

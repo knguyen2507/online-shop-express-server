@@ -110,7 +110,7 @@ const get_user_by_admin = async ({id}) => {
         code: 200,
         metadata: {
             user: getData({
-                    fields: ['_id', 'name', 'email', 'role'],
+                    fields: ['_id', 'username', 'name', 'email', 'role'],
                     object: user
                 })
         }

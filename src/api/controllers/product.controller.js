@@ -48,7 +48,7 @@ const createProduct = async (req, res) => {
         id, name, qty, category, brand, price, details
     } = req.body;
 
-    const image = `uploads/products/${req.file.originalname.split('.')[0]}/${req.file.originalname}`;
+    const image = `uploads/products/${id}/${req.file.originalname}`;
 
     if (storage !== false) {
         const storageRef = ref(storage, image);

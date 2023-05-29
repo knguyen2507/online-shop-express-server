@@ -11,7 +11,7 @@ const signAccessToken = async (id) => {
     return new Promise ((resolve, reject) => {
         const payload = { id };
         const secret = process.env.SECRET_ACCESS_TOKEN;
-        const options = { expiresIn: '60s'};
+        const options = { expiresIn: '1d'};
 
         JWT.sign(payload, secret, options, (err, token) => {
             if (err) reject(err)

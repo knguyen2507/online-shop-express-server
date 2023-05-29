@@ -3,6 +3,7 @@
 const dotenv = require('dotenv');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const firebaseConfig = require('./config.firebase');
 const { initializeApp } = require('firebase/app');
 const { getStorage } = require('firebase/storage');
@@ -16,7 +17,9 @@ const config = (env) => {
                 cb(null, path.join(__dirname, '../../../public/'));
             },
             filename: (req, file, cb) => {
-                cb(null, `uploads/products/${file.originalname}`);
+                const dir = path.join(__dirname, `../../../public/uploads/products/${req.body.id}`);
+                fs.mkdirSync(dir)
+                cb(null, `uploads/products/${req.body.id}/${file.originalname}`);
             }
         });
         
