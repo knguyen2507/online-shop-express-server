@@ -20,7 +20,9 @@ const paymentRouter = require('./api/routes/payment.router');
 
 const app = express();
 // init middlewares
-app.use(cors());
+app.use(cors({
+    origin: '*'
+}));
 app.use(compression());
 app.use(morgan("dev"));
 app.use(helmet());
