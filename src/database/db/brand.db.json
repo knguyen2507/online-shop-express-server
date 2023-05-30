@@ -2,41 +2,49 @@
     {
         "id": "hitachi",
         "name": "Hitachi",
-        "image": "images/brand/hitachi.jpg"
+        "image": "images/brand/hitachi.jpg",
+        "firebase": "https://firebasestorage.googleapis.com/v0/b/home-appliance-store-6a5d2.appspot.com/o/images%2Fbrand%2Fhitachi.jpg?alt=media&token=b80a6654-26f6-4943-8e26-0f9424fad494&_gl=1*gr3u74*_ga*NDg0NTM5Mzg0LjE2ODQwNjgyMzg.*_ga_CW55HF8NVT*MTY4NTQyMDQyMi4xMS4xLjE2ODU0MjA1ODQuMC4wLjA."
     },
     {
         "id": "panasonic",
         "name": "Panasonic",
-        "image": "images/brand/panasonic.jpg"
+        "image": "images/brand/panasonic.jpg",
+        "firebase": "https://firebasestorage.googleapis.com/v0/b/home-appliance-store-6a5d2.appspot.com/o/images%2Fbrand%2Fpanasonic.jpg?alt=media&token=a5d4eff0-72c8-46cf-be25-ae100136d5f1&_gl=1*nva7iu*_ga*NDg0NTM5Mzg0LjE2ODQwNjgyMzg.*_ga_CW55HF8NVT*MTY4NTQyMDQyMi4xMS4xLjE2ODU0MjA3MDguMC4wLjA."
     },
     {
         "id": "samsung",
         "name": "Samsung",
-        "image": "images/brand/samsung.jpg"
+        "image": "images/brand/samsung.jpg",
+        "firebase": "https://firebasestorage.googleapis.com/v0/b/home-appliance-store-6a5d2.appspot.com/o/images%2Fbrand%2Fsamsung.jpg?alt=media&token=4a99ef33-053d-4f84-a10e-b919c50122f9&_gl=1*1pv9ivi*_ga*NDg0NTM5Mzg0LjE2ODQwNjgyMzg.*_ga_CW55HF8NVT*MTY4NTQyMDQyMi4xMS4xLjE2ODU0MjA3NTIuMC4wLjA."
     },
     {
         "id": "toshiba",
         "name": "Toshiba",
-        "image": "images/brand/toshiba.jpg"
+        "image": "images/brand/toshiba.jpg", 
+        "firebase": "https://firebasestorage.googleapis.com/v0/b/home-appliance-store-6a5d2.appspot.com/o/images%2Fbrand%2Ftoshiba.jpg?alt=media&token=c7123e11-fb3e-4349-a0df-b29db551c219&_gl=1*11it7s0*_ga*NDg0NTM5Mzg0LjE2ODQwNjgyMzg.*_ga_CW55HF8NVT*MTY4NTQyMDQyMi4xMS4xLjE2ODU0MjA4MDguMC4wLjA."
     },
     {
         "id": "tcl",
         "name": "TCL",
-        "image": "images/brand/tcl.jpg"
+        "image": "images/brand/tcl.jpg",
+        "firebase": "https://firebasestorage.googleapis.com/v0/b/home-appliance-store-6a5d2.appspot.com/o/images%2Fbrand%2Ftcl.jpg?alt=media&token=162b6ee0-aab2-40e9-b28c-e890d9f6638d&_gl=1*8rm7fh*_ga*NDg0NTM5Mzg0LjE2ODQwNjgyMzg.*_ga_CW55HF8NVT*MTY4NTQyMDQyMi4xMS4xLjE2ODU0MjA3ODcuMC4wLjA."
     },
     {
         "id": "sony",
         "name": "Sony",
-        "image": "images/brand/sony.jpg"
+        "image": "images/brand/sony.jpg",
+        "firebase": "https://firebasestorage.googleapis.com/v0/b/home-appliance-store-6a5d2.appspot.com/o/images%2Fbrand%2Fsony.jpg?alt=media&token=21e17fc1-29ef-44b1-a404-fd43f333a3d5&_gl=1*1g9qbjz*_ga*NDg0NTM5Mzg0LjE2ODQwNjgyMzg.*_ga_CW55HF8NVT*MTY4NTQyMDQyMi4xMS4xLjE2ODU0MjA3NzEuMC4wLjA."
     },
     {
         "id": "lg",
         "name": "LG",
-        "image": "images/brand/lg.jpg"
+        "image": "images/brand/lg.jpg",
+        "firebase": "https://firebasestorage.googleapis.com/v0/b/home-appliance-store-6a5d2.appspot.com/o/images%2Fbrand%2Flg.jpg?alt=media&token=f857023b-c522-4454-bcb3-4aa1b42c5435&_gl=1*5mgv7l*_ga*NDg0NTM5Mzg0LjE2ODQwNjgyMzg.*_ga_CW55HF8NVT*MTY4NTQyMDQyMi4xMS4xLjE2ODU0MjA3MDAuMC4wLjA."
     },
     {
         "id": "karofi",
         "name": "Karofi",
-        "image": "images/brand/karofi.jpg"
+        "image": "images/brand/karofi.jpg",
+        "firebase": "https://firebasestorage.googleapis.com/v0/b/home-appliance-store-6a5d2.appspot.com/o/images%2Fbrand%2Fkarofi.jpg?alt=media&token=a6d1c96d-31ee-4d33-9c5b-dc522523ef8a&_gl=1*p6ni0n*_ga*NDg0NTM5Mzg0LjE2ODQwNjgyMzg.*_ga_CW55HF8NVT*MTY4NTQyMDQyMi4xMS4xLjE2ODU0MjA2NTUuMC4wLjA."
     }
 ]

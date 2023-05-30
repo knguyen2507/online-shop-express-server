@@ -31,6 +31,9 @@ const productSchema = new Schema({
     image: {
         type: String
     },
+    firebase: {
+        type: String
+    },
     details: []
 }, {
     collection: COLLECTION_NAME,

@@ -15,6 +15,9 @@ const brandSchema = new Schema({
     },
     image: {
         type: String
+    },
+    firebase: {
+        type: String
     }
 }, {
     collection: COLLECTION_NAME,
