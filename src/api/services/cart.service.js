@@ -3,15 +3,17 @@
 // models
 const _Cart = require('../models/cart.model');
 const _Product = require('../models/product.model');
+// core
+const {
+    InternalServerError, 
+    BadRequestError,
+    UnauthorizedError
+} = require('../core/error.res');
+
 // get cart by id
 const get_cart_by_id = async ({id}) => {
     const cart = await _Cart.find({idUser: id});
-    if (!cart) {
-        return {
-            code: 500,
-            message: "Internal Server Error"
-        }
-    }
+    if (!cart) throw new InternalServerError();
     return {
         code: 201,
         metadata: cart
@@ -22,23 +24,13 @@ const add_product_to_cart = async ({id, idProduct}) => {
     const cart = await _Cart.findOne({idUser: id, idProduct});
     const productInInventory = await _Product.findOne({id: idProduct});
 
-    if (!productInInventory) {
-        return {
-            code: 500,
-            message: "Internal Server Error"
-        }
-    }
+    if (!productInInventory) throw new InternalServerError();
 
     if (cart) {
         return await add_qty_product_in_cart({id: cart._id, idUser: id});
     }
 
-    if (productInInventory.qty < 1) {
-        return {
-            code: 401,
-            message: "You buy more than the qty of product in inventory"
-        }
-    }
+    if (productInInventory.qty < 1) throw new BadRequestError('Mua vượt quá số lượng hàng hóa')
 
     await _Cart.create({
         idUser: id,
@@ -51,34 +43,19 @@ const add_product_to_cart = async ({id, idProduct}) => {
 
     return {
         code: 201,
-        message: `Add product ${productInInventory.name} Successfully!`
+        message: `Thêm sản phẩm ${productInInventory.name} vào giỏ hàng thành công!`
     }
 };
 // add qty product in cart
 const add_qty_product_in_cart = async ({id, idUser}) => {
     const cart = await _Cart.findOne({_id: id});
-    if (!cart) {
-        return {
-            code: 500,
-            message: "Internal Server Error"
-        }
-    }
+    if (!cart) throw new InternalServerError();
 
-    if (cart.idUser !== idUser) {
-        return {
-            code: 401,
-            message: "You does not have access!"
-        }
-    }
+    if (cart.idUser !== idUser) throw new UnauthorizedError('Bạn không có quyền truy cập');
 
     const productInInventory = await _Product.findOne({id: cart.idProduct});
 
-    if (productInInventory.qty === cart.qty) {
-        return {
-            code: 401,
-            message: "You buy more than the qty of product in inventory"
-        }
-    }
+    if (productInInventory.qty === cart.qty) throw new BadRequestError('Mua vượt quá số lượng hàng hóa')
 
     await _Cart.updateOne(
         {_id: id}, 
@@ -87,25 +64,15 @@ const add_qty_product_in_cart = async ({id, idUser}) => {
 
     return {
         code: 201,
-        message: `Add 1 item from Cart ${id}!`
+        message: `Thêm 1 sản phẩm vào giỏ hàng ${id}!`
     }
 }
 // reduce qty product in cart
 const reduce_product_in_cart = async ({id, idUser}) => {
     const cart = await _Cart.findOne({_id: id});
-    if (!cart) {
-        return {
-            code: 500,
-            message: "Internal Server Error"
-        }
-    }
+    if (!cart) throw new InternalServerError();
 
-    if (cart.idUser !== idUser) {
-        return {
-            code: 401,
-            message: "You does not have access!"
-        }
-    }
+    if (cart.idUser !== idUser) throw new UnauthorizedError('Bạn không có quyền truy cập');
 
     if (cart.qty === 1) {
         return await remove_product_from_cart({id, idUser})
@@ -118,31 +85,21 @@ const reduce_product_in_cart = async ({id, idUser}) => {
 
     return {
         code: 201,
-        message: `Reduce 1 item from Cart ${id}!`
+        message: `Giảm 1 sản phẩm trong giỏ hàng ${id}!`
     }
 };
 // remove product from cart
 const remove_product_from_cart = async ({id, idUser}) => {
     const cart = await _Cart.findOne({_id: id});
-    if (!cart) {
-        return {
-            code: 500,
-            message: "Internal Server Error"
-        }
-    }
+    if (!cart) throw new InternalServerError();
 
-    if (cart.idUser !== idUser) {
-        return {
-            code: 401,
-            message: "You does not have access!"
-        }
-    }
+    if (cart.idUser !== idUser) throw new UnauthorizedError('Bạn không có quyền truy cập');
 
     await _Cart.deleteOne({_id: id})
 
     return {
         code: 201,
-        message: `Remove Cart ${id}!`
+        message: `Gỡ giỏ hàng ${id}!`
     }
 }
 

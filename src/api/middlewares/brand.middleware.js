@@ -1,21 +1,24 @@
 'use strict'
 
-const createError = require('http-errors');
 // models
 const _Brand = require('../models/brand.model');
+// core
+const {
+    BadRequestError
+} = require('../core/error.res');
 
 const checkCreateBrand = async (req, res, next) => {
     if (req.body.id === '' || req.body.name === '') {
-        return next(createError.BadRequest('Please Fill all fields'));
+        throw new BadRequestError('Không được để trống dữ liệu');
     }
 
     if (req.file.originalname.includes('.')) {
         const extension = req.file.originalname.split('.')[1];
         if (extension !== 'jpg') {
-            return next(createError.Unauthorized("only accept .jpg file!"));
+            throw new BadRequestError('Chỉ cho phép file .jpg');
         }
     } else {
-        return next(createError.Unauthorized("You uploaded invalid file!"));
+        throw new BadRequestError('File ảnh không hợp lệ');
     }
 
     const {id, name} = req.body;
@@ -24,7 +27,7 @@ const checkCreateBrand = async (req, res, next) => {
     const checkName = await _Brand.findOne({name});
 
     if (checkId || checkName) {
-        return next(createError.Unauthorized("Brand already exists!"));
+        throw new BadRequestError('Nhãn hàng này đã tồn tại');
     }
 
     next();

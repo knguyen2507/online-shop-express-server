@@ -1,14 +1,17 @@
 'use strict'
 
-const createError = require('http-errors');
 const bcrypt = require('bcrypt');
 // models
 const _User = require('../models/user.model');
+// core
+const {
+    BadRequestError
+} = require('../core/error.res');
 
 // check signin
 const checkLogin = async (req, res, next) => {
     if (req.body.username === "" || req.body.password === "") {
-        return next(createError.BadRequest('Please Fill all fields'));
+        throw new BadRequestError('Không được để trống dữ liệu');
     }
 
     next();
@@ -16,10 +19,10 @@ const checkLogin = async (req, res, next) => {
 // check signup
 const checkRegister = async (req, res, next) => {
     if (req.body.username === "" || req.body.password === "" || req.body.email === "" || req.body.name === "") {
-        return next(createError.BadRequest('Please Fill all fields'));
+        throw new BadRequestError('Không được để trống dữ liệu');
     }
     if (req.body.password !== req.body.re_password) {
-        return next(createError.BadRequest('Incorrect password'));
+        throw new BadRequestError('Mật khẩu không trùng khớp');
     }
 
     const username = req.body.username;
@@ -29,12 +32,12 @@ const checkRegister = async (req, res, next) => {
 
     // check username avaiable
     if (getUserByUsername) {
-        return next(createError.BadRequest('This username is used!'));
+        throw new BadRequestError('Tài khoản đã được sử dụng');
     }
 
     // check email avaiable
     if (getUserByEmail) {
-        return next(createError.BadRequest('This email is used!'));
+        throw new BadRequestError('Email đã được sử dụng');
     }
 
     next();
@@ -46,13 +49,13 @@ const checkNewPassword = async (req, res, next) => {
 
     // check user avaiable
     if (!user) {
-        return next(createError.BadRequest('This email does not exist!'));
+        throw new BadRequestError('Email không tồn tại');
     }
     if (req.body.password === "" || req.body.email === "" || req.body.re_password === "") {
-        return next(createError.BadRequest('Please Fill all fields'));
+        throw new BadRequestError('Không được để trống dữ liệu');
     }
     if (req.body.password !== req.body.re_password) {
-        return next(createError.BadRequest('Incorrect password'));
+        throw new BadRequestError('Mật khẩu không trùng khớp');
     }
 
     next();
@@ -64,23 +67,23 @@ const checkChangePassword = async (req, res, next) => {
 
     // check user avaiable
     if (!user) {
-        return next(createError.BadRequest('This user does not exist!'));
+        throw new BadRequestError(`Không tồn tại user có id: ${id}`);
     }
 
     if (req.body.password === "" || req.body.re_password === "" || req.body.cur_password === "") {
-        return next(createError.BadRequest('Please Fill all fields'));
+        throw new BadRequestError('Không được để trống dữ liệu');
     }
     if (req.body.password !== req.body.re_password) {
-        return next(createError.BadRequest('Incorrect password'));
+        throw new BadRequestError('Mật khẩu không trùng khớp');
     }
     if (req.body.password === req.body.cur_password) {
-        return next(createError.BadRequest('New password cannot be the same as your old password'));
+        throw new BadRequestError('Mật khẩu mới giống mật khẩu cũ');
     }
 
     const isValid = await bcrypt.compare(req.body.cur_password, user.password);
 
     if (!isValid) {
-        return next(createError.BadRequest('Incorrect password'));
+        throw new BadRequestError('Mật khẩu cũ không chính xác');
     }
 
     next();

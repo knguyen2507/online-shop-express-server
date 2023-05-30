@@ -41,14 +41,18 @@ app.use('/cart', cartRouter);
 app.use('/payment', paymentRouter);
 // handling error
 app.use((req, res, next) => {
-    next(createError.NotFound('This route does not exist!'));
+    const error = new Error('Not Found');
+    error.status = 404;
+    next(error);
 });
-app.use((err, req, res, next) => {
-    res.status(err.status || 500).json({
-        code: err.status || 500,
-        message: err.message
+app.use((error, req, res, next) => {
+    const statusCode = error.status || 500;
+    return res.status(statusCode).json({
+        status: 'error',
+        code: statusCode,
+        message: error.message || 'Internal Server Error'
     })
-})
+});
 
 // export module
 module.exports = app;

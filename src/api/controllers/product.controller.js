@@ -16,32 +16,36 @@ const {
     update_product,
     delete_product
 } = require('../services/product.service');
+// core
+const {
+    OK, CREATED
+} = require('../core/success.res');
 
 // get all products
 const getAllProducts = async (req, res) => {
     const {code, metadata, message} = await get_all_products({});
     
-    return res.status(code).json({
-        code, metadata, message
-    });
+    new OK ({
+        code, message, metadata
+    }).send(res);
 };
 // get product by id
 const getProductById = async (req, res) => {
     const id = req.params.id;
     const {code, metadata, message} = await get_product_by_id({id});
     
-    return res.status(code).json({
-        code, metadata, message
-    });
+    new OK ({
+        code, message, metadata
+    }).send(res);
 };
 // get product by id
 const searchProduct = async (req, res) => {
     const key = req.body.key;
     const {code, metadata, message} = await search_product({key});
     
-    return res.status(code).json({
-        code, metadata, message
-    });
+    new OK ({
+        code, message, metadata
+    }).send(res);
 };
 // create new product
 const createProduct = async (req, res) => {
@@ -69,9 +73,9 @@ const createProduct = async (req, res) => {
         id, name, qty, category, brand, price, image, details, firebase
     });
 
-    return res.status(code).json({
+    new CREATED ({
         code, message
-    });
+    }).send(res);
 };
 // update product
 const updateProduct = async (req, res) => {
@@ -82,9 +86,9 @@ const updateProduct = async (req, res) => {
         id, qty, price
     });
 
-    return res.status(code).json({
-        code, metadata, message
-    });
+    new OK ({
+        code, message, metadata
+    }).send(res);
 }
 // delete product
 const deleteProduct = async (req, res) => {
@@ -92,9 +96,9 @@ const deleteProduct = async (req, res) => {
 
     const {code, message} = await delete_product({id});
 
-    return res.status(code).json({
+    new OK ({
         code, message
-    });
+    }).send(res);
 }
 
 // export module

@@ -1,10 +1,11 @@
 'use strict'
 
 const JWT = require('jsonwebtoken');
-const createError = require('http-errors');
 const client = require('../../database/init.redis');
-// models
-const _User = require('../models/user.model');
+// core
+const {
+    InternalServerError
+} = require('../core/error.res');
 
 // create access token
 const signAccessToken = async (id) => {
@@ -30,31 +31,11 @@ const signRefreshToken = async (id) => {
             if (err) reject(err)
 
             client.set(payload.id.toString(), token, 'EX', 365*24*60*60, (err, reply) => {
-                if (err) reject(createError.InternalServerError())
+                if (err) reject(new InternalServerError())
                 resolve(token)
             })
         })
     })
-};
-// check role admin
-const check_access_role_admin = async (id) => {
-    const user = await _User.findOne({_id: id});
-    if (!user) {
-        return {
-            code: 500,
-            message: "Internal Server Error"
-        }
-    }
-    if (user.role !== 'Admin') {
-        return {
-            code: 401,
-            message: "You don't have Access"
-        }
-    }
-    return {
-        code: 200,
-        message: "OK"
-    }
 };
 
 module.exports = {

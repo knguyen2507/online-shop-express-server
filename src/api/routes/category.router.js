@@ -15,26 +15,41 @@ const {
     verifyAccessToken,
     authPage
 } = require('../middlewares/jwt.middleware');
+const {
+    asyncHandler
+} = require('../middlewares');
 
 const router = express.Router();
 
-router.get('/get-all-categories', getAllCategories);
-router.get('/:category/products', getProductByCategory);
-router.post(
-    '/create-category', 
-    [
-        checkCreateBrand,
-        verifyAccessToken,
-        authPage(['Admin'])
-    ], 
-    createCategory
+// get all categories
+router.get('/get-all-categories', 
+    asyncHandler(getAllCategories)
 );
+// get products by category
+router.get('/:category/products', 
+    asyncHandler(getProductByCategory)
+);
+// create new category
+router.post('/create-category', 
+    [
+        asyncHandler(checkCreateBrand),
+        asyncHandler(verifyAccessToken),
+        asyncHandler(authPage(['Admin']))
+    ], 
+    asyncHandler(createCategory)
+);
+// delete category
 router.delete('/delete-category/:id',
     [
-        verifyAccessToken, 
-        authPage(['Admin'])
+        asyncHandler(verifyAccessToken), 
+        asyncHandler(authPage(['Admin']))
     ],
-    deleteCategory
+    asyncHandler(deleteCategory)
 );
-router.get('/:id', getCategoryByName);
+// get category by name
+router.get('/:id', 
+    asyncHandler(getCategoryByName)
+);
+
+// export module
 module.exports = router;

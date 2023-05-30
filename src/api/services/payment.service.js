@@ -6,6 +6,12 @@ const _Cart = require('../models/cart.model');
 const _Product = require('../models/product.model');
 const _HistoryPayment = require('../models/historyPayment.model');
 const _User = require('../models/user.model');
+// core
+const {
+    BadRequestError,
+    InternalServerError,
+    UnauthorizedError
+} = require('../core/error.res');
 
 // get all payments
 const get_all_payments = async () => {
@@ -13,7 +19,7 @@ const get_all_payments = async () => {
     
     return {
         code: 201,
-        message: "Get all Payments",
+        message: "Tất cả thanh toán",
         metadata: payments
     }
 };
@@ -23,7 +29,7 @@ const get_all_history_payments = async () => {
     
     return {
         code: 201,
-        message: "Get all History Payments",
+        message: "Tất cả lịch sử thanh toán",
         metadata: historyPayments
     }
 }
@@ -35,22 +41,19 @@ const get_payment_by_id = async ({id, idUser}) => {
     if (!payments) {
         return {
             code: 201,
-            message: `Not have requesting payment`
+            message: `Không có yêu cầu thanh toán`
         }
     }
 
     if (payments.id === idUser || user.role === "Admin") {
         return {
             code: 201,
-            message: "Get all Payments",
+            message: `Tất cả thanh toán của ${user.username}`,
             metadata: payments
         }
     }
     
-    return {
-        code: 401,
-        message: "You does not have access!"
-    }
+    throw new UnauthorizedError('Bạn không có quyền truy cập')
 };
 // get payments by id user
 const get_payments_by_id_user = async ({id}) => {
@@ -58,7 +61,7 @@ const get_payments_by_id_user = async ({id}) => {
     
     return {
         code: 201,
-        message: "Get all Payments",
+        message: "Tất cả Thanh toán",
         metadata: payments
     }
 };
@@ -68,7 +71,7 @@ const get_history_payments_by_id_user = async ({id}) => {
     
     return {
         code: 201,
-        message: "Get all History Payments",
+        message: "Tất cả lịch sử Thanh toán",
         metadata: historyPayments
     }
 }
@@ -77,18 +80,8 @@ const payment_cart = async ({id, carts}) => {
     const products = [];
     for (let idCart of carts) {
         const cart = await _Cart.findOne({_id: idCart});
-        if (!cart) {
-            return {
-                code: 500,
-                message: "Internal Server Error"
-            }
-        }
-        if (id !== cart.idUser) {
-            return {
-                code: 401,
-                message: "You does not have access!"
-            }
-        }
+        if (!cart) throw new InternalServerError();
+        if (id !== cart.idUser) throw new UnauthorizedError('Bạn không có quyền truy cập')
         products.push({
             idUser: cart.idUser,
             idProduct: cart.idProduct,
@@ -104,25 +97,15 @@ const payment_cart = async ({id, carts}) => {
 
     return {
         code: 201,
-        message: `Awaiting payment`
+        message: `Đợi xác nhận thanh toán`
     }
 };
 // User Cancel payment
 const cancel_payment = async({id, idUser}) => {
     const payment = await _Payment.findOne({_id: id});
-    if (!payment) {
-        return {
-            code: 401,
-            message: `Not have requesting payment`
-        }
-    }
+    if (!payment) throw new InternalServerError();
 
-    if (payment.id !== idUser) {
-        return {
-            code: 401,
-            message: "You does not have access!"
-        }
-    }
+    if (payment.id !== idUser) throw new UnauthorizedError('Bạn không có quyền truy cập');
 
     const carts = payment.carts;
 
@@ -131,46 +114,31 @@ const cancel_payment = async({id, idUser}) => {
 
     return {
         code: 201,
-        message: "Cancel Payment Successfully!"
+        message: "Hủy Thanh toán thành công"
     }
 };
 // admin cancel payment
 const cancel_payment_by_admin = async({id}) => {
     const payment = await _Payment.findOne({_id: id});
-    if (!payment) {
-        return {
-            code: 401,
-            message: `Not have requesting payment`
-        }
-    }
+    if (!payment) throw new InternalServerError();
 
     await _Payment.deleteOne({_id: id});
 
     return {
         code: 201,
-        message: "Cancel Payment Successfully!"
+        message: "Hủy Thanh toán thành công"
     }
 }
 // confirm a payment
 const confirm_payment = async ({id}) => {
     const payment = await _Payment.findOne({_id: id});
-    if (!payment) {
-        return {
-            code: 401,
-            message: `Not have requesting payment`
-        }
-    }
+    if (!payment) throw new InternalServerError();
 
     await _Payment.deleteOne({_id: id});
 
     for (let cart of payment.carts) {
         const productInInventory = await _Product.findOne({id: cart.idProduct});
-        if (productInInventory.qty < cart.qty) {
-            return {
-                code: 401,
-                message: "You buy more than the qty of product in inventory"
-            }
-        }
+        if (productInInventory.qty < cart.qty) throw new BadRequestError('Mua quá số lượng hàng hóa')
         await _Product.updateOne(
             {
                 id: cart.idProduct
@@ -192,7 +160,7 @@ const confirm_payment = async ({id}) => {
 
     return {
         code: 201,
-        message: "Payment Successfully!"
+        message: "Thanh toán thành công"
     }
 }
 

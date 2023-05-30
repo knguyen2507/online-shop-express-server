@@ -20,39 +20,53 @@ const {
     verifyAccessToken,
     authPage
 } = require('../middlewares/jwt.middleware');
+const {
+    asyncHandler
+} = require('../middlewares');
 
 const router = express.Router();
 
-
-
-router.get('/get-all-products', getAllProducts);
+// get all products
+router.get('/get-all-products', 
+    asyncHandler(getAllProducts)
+);
+// admin create product
 router.post('/create-product', 
     [
         upload.single('image'), 
-        checkCreateProduct, 
-        verifyAccessToken, 
-        authPage(['Admin'])
+        asyncHandler(checkCreateProduct), 
+        asyncHandler(verifyAccessToken), 
+        asyncHandler(authPage(['Admin']))
     ], 
-    createProduct
+    asyncHandler(createProduct)
 );
-router.patch(
-    '/update-product/:id', 
+// admin update product
+router.patch('/update-product/:id', 
     [
-        verifyAccessToken, 
-        authPage(['Admin'])
+        asyncHandler(verifyAccessToken), 
+        asyncHandler(authPage(['Admin']))
     ],
-    updateProduct
+    asyncHandler(updateProduct)
 );
-router.delete(
-    '/delete-product/:id',
+// admin delete product
+router.delete('/delete-product/:id',
     [
-        verifyAccessToken, 
-        authPage(['Admin'])
+        asyncHandler(verifyAccessToken), 
+        asyncHandler(authPage(['Admin']))
     ], 
-    deleteProduct
+    asyncHandler(deleteProduct)
 );
-router.post('/search', [checkSearchProduct], searchProduct);
-router.get('/:id', getProductById);
+// find product
+router.post('/search', 
+    [
+        asyncHandler(checkSearchProduct)
+    ], 
+    asyncHandler(searchProduct)
+);
+// get product by id
+router.get('/:id', 
+    asyncHandler(getProductById)
+);
 
 // export module
 module.exports = router;

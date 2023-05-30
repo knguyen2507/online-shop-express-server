@@ -13,43 +13,46 @@ const {
 const { 
     verifyAccessToken
 } = require('../middlewares/jwt.middleware');
+const {
+    asyncHandler
+} = require('../middlewares');
 
 const router = express.Router();
 
-router.post(
-    '/add-product-to-cart', 
+// add product to cart
+router.post('/add-product-to-cart', 
     [
-        verifyAccessToken
+        asyncHandler(verifyAccessToken)
     ], 
-    addProductToCart
+    asyncHandler(addProductToCart)
 );
-router.patch(
-    '/:id/add-qty-product-from-cart', 
+// add qty product in cart
+router.patch('/:id/add-qty-product-from-cart', 
     [
-        verifyAccessToken
+        asyncHandler(verifyAccessToken)
     ], 
-    addQtyProductInCart
+    asyncHandler(addQtyProductInCart)
 );
-router.patch(
-    '/:id/reduce-product-from-cart', 
+// reduce qty product in cart
+router.patch('/:id/reduce-product-from-cart', 
     [
-        verifyAccessToken
+        asyncHandler(verifyAccessToken)
     ], 
-    reduceProductInCart
+    asyncHandler(reduceProductInCart)
 );
-router.delete(
-    '/:id/remove-product-from-cart', 
+// delete product from cart
+router.delete('/:id/remove-product-from-cart', 
     [
-        verifyAccessToken
+        asyncHandler(verifyAccessToken)
     ], 
-    removeProductFromCart
+    asyncHandler(removeProductFromCart)
 );
-router.get(
-    '/:id', 
+// get cart by userId
+router.get('/:id', 
     [
-        verifyAccessToken
+        asyncHandler(verifyAccessToken)
     ], 
-    getCartById
+    asyncHandler(getCartById)
 );
 
 // export module

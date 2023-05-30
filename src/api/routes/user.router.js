@@ -31,44 +31,102 @@ const {
     verifyRefreshToken,
     authPage
 } = require('../middlewares/jwt.middleware');
+const {
+    asyncHandler
+} = require('../middlewares');
 
 const router = express.Router();
-
-router.get('/get-all-users', [verifyAccessToken, authPage(['Admin'])], getAllUsers);
-router.post('/login', [checkLogin], logIn);
-router.post('/change-password/:id', [checkChangePassword, verifyAccessToken], changePassword);
-router.post('/forgot-password', [checkNewPassword], forgotPassword);
-router.post('/forgot-password/verify-otp', passwordVerifyOtp);
-router.post('/refresh-token', [verifyRefreshToken], refreshToken);
-router.delete('/logout', [verifyRefreshToken], logOut);
-router.post('/register', [checkRegister], signUpGuest);
-router.post('/register/verify-otp', RegisterVerifyOtp);
-router.post(
-    '/admin/create-user', 
+// get all users
+router.get('/get-all-users', 
     [
-        checkRegister,
-        verifyAccessToken,
-        authPage(['Admin'])
+        asyncHandler(verifyAccessToken), 
+        asyncHandler(authPage(['Admin']))
     ], 
-    createUserByAdmin
+    asyncHandler(getAllUsers)
 );
-router.delete(
-    '/admin/delete-user/:id', 
+// login
+router.post('/login', 
     [
-        verifyAccessToken,
-        authPage(['Admin'])
+        asyncHandler(checkLogin)
     ], 
-    deleteUser
+    asyncHandler(logIn)
 );
-router.get(
-    '/admin/get-user-by-id/:id', 
+// change password
+router.post('/change-password/:id', 
     [
-        verifyAccessToken,
-        authPage(['Admin'])
+        asyncHandler(checkChangePassword), 
+        asyncHandler(verifyAccessToken)
     ], 
-    getUserByAdmin
+    asyncHandler(changePassword)
 );
-router.get('/:id', [verifyAccessToken], getUserById);
+// forgot password
+router.post('/forgot-password', 
+    [
+        asyncHandler(checkNewPassword)
+    ], 
+    asyncHandler(forgotPassword)
+);
+// verify otp forgot password
+router.post('/forgot-password/verify-otp', 
+    asyncHandler(passwordVerifyOtp)
+);
+// get new access token by refresh token
+router.post('/refresh-token', 
+    [
+        asyncHandler(verifyRefreshToken)
+    ], 
+    asyncHandler(refreshToken)
+);
+// logout
+router.delete('/logout', 
+    [
+        asyncHandler(verifyRefreshToken)
+    ], 
+    asyncHandler(logOut)
+);
+// signup
+router.post('/register', 
+    [
+        asyncHandler(checkRegister)
+    ], 
+    asyncHandler(signUpGuest)
+);
+// verify otp signup
+router.post('/register/verify-otp', 
+    asyncHandler(RegisterVerifyOtp)
+);
+// admin create new user
+router.post('/admin/create-user', 
+    [
+        asyncHandler(checkRegister),
+        asyncHandler(verifyAccessToken),
+        asyncHandler(authPage(['Admin']))
+    ], 
+    asyncHandler(createUserByAdmin)
+);
+// admin delete user
+router.delete('/admin/delete-user/:id', 
+    [
+        asyncHandler(verifyAccessToken),
+        asyncHandler(authPage(['Admin']))
+    ], 
+    asyncHandler(deleteUser)
+);
+// admin get user info
+router.get('/admin/get-user-by-id/:id', 
+    [
+        asyncHandler(verifyAccessToken),
+        asyncHandler(authPage(['Admin']))
+    ], 
+    asyncHandler(getUserByAdmin)
+);
+// get user by id
+router.get('/:id', 
+    [
+        asyncHandler(verifyAccessToken)
+    ], 
+    asyncHandler(getUserById)
+);
 
 // export module
 module.exports = router;

@@ -18,29 +18,42 @@ const {
     verifyAccessToken,
     authPage
 } = require('../middlewares/jwt.middleware');
+const {
+    asyncHandler
+} = require('../middlewares');
 
 const router = express.Router();
 
-router.get('/get-all-brands', getAllBrands);
+// get all brands
+router.get('/get-all-brands', 
+    asyncHandler(getAllBrands)
+);
+// admin create brand
 router.post('/create-brand', 
     [
         upload.single('image'),
-        checkCreateBrand,
-        verifyAccessToken,
-        authPage(['Admin'])
+        asyncHandler(checkCreateBrand),
+        asyncHandler(verifyAccessToken),
+        asyncHandler(authPage(['Admin']))
     ],
-    createBrand
+    asyncHandler(createBrand)
 );
-router.delete(
-    '/delete-brand/:id',
+// admin delete brand
+router.delete('/delete-brand/:id',
     [
-        verifyAccessToken, 
-        authPage(['Admin'])
+        asyncHandler(verifyAccessToken), 
+        asyncHandler(authPage(['Admin']))
     ], 
-    deleteBrand
+    asyncHandler(deleteBrand)
 );
-router.get('/:brand/products', getProductByBrand);
-router.get('/:id', getBrandByName);
+// get product by brand
+router.get('/:brand/products', 
+    asyncHandler(getProductByBrand)
+);
+// get brand by name
+router.get('/:id', 
+    asyncHandler(getBrandByName)
+);
 
 // export module
 module.exports = router;

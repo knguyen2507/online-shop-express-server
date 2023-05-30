@@ -9,17 +9,16 @@ const {
 const { storage } = require('../configs/config.storedFile');
 // models
 const _Product = require('../models/product.model');
-// utils
+// core
+const {
+    BadRequestError,
+    InternalServerError
+} = require('../core/error.res');
 
 // get all products
 const get_all_products = async () => {
     const products = await _Product.find({});
-    if (!products) {
-        return {
-            code: 500,
-            message: "Internal Server Error"
-        }
-    }
+    if (!products) throw new InternalServerError();
     return {
         code: 200,
         metadata: {
@@ -30,12 +29,7 @@ const get_all_products = async () => {
 // get product by id
 const get_product_by_id = async ({id}) => {
     const product = await _Product.findOne({id});
-    if (!product) {
-        return {
-            code: 401,
-            message: "Product not exist in database!"
-        }
-    }
+    if (!product) throw new BadRequestError('Sản phẩm không tồn tại');
     return {
         code: 200,
         metadata: {
@@ -70,7 +64,7 @@ const search_product = async ({key}) => {
         return {
             code: 201,
             metadata: {products: []},
-            message: `No results found for ${key}`
+            message: `Không có kết quả với từ khóa ${key}`
         }
     }
 
@@ -79,7 +73,7 @@ const search_product = async ({key}) => {
         metadata: {
             products: op
         },
-        message: "Successfully"
+        message: "Tìm kiếm thành công"
     }
 }
 // create new product
@@ -88,11 +82,11 @@ const create_product = async ({id, name, qty, category, brand, price, image, det
         id, name, qty, category, brand, price, image, details, firebase
     };
 
-    const product = await _Product.create(newProduct);
+    await _Product.create(newProduct);
 
     return {
         code: 201,
-        message: "Product has been successfully created"
+        message: "Sản phẩm thêm mới thành công"
     }
 };
 // update product
@@ -101,19 +95,14 @@ const update_product = async ({id, qty, price}) => {
 
     return {
         code: 201,
-        message: "Product updated Successfully!",
+        message: "Sản phẩm cập nhật thành công",
         metadata: product
     }
 };
 // delete product
 const delete_product = async ({id}) => {
     const product = await _Product.findOne({id});
-    if (!product) {
-        return {
-            code: 500,
-            message: "Internal Server Error"
-        }
-    }
+    if (!product) throw new InternalServerError();
     await _Product.deleteOne({id});
     if (storage === false) {
         await fs.remove(`public/${product.image}`);
@@ -122,7 +111,7 @@ const delete_product = async ({id}) => {
     }
     return {
         code: 201,
-        message: "Product delete Successfully!"
+        message: "Sản phẩm xóa thành công"
     }
 }
 

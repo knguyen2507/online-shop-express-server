@@ -1,12 +1,15 @@
 'use strict'
 
-const createError = require('http-errors');
 // models
 const _Category = require('../models/category.model');
+// core
+const {
+    BadRequestError
+} = require('../core/error.res');
 
 const checkCreateBrand = async (req, res, next) => {
     if (req.body.id === '' || req.body.name === '') {
-        return next(createError.BadRequest('Please Fill all fields'));
+        throw new BadRequestError('Không được để trống dữ liệu');
     }
 
     const {id, name} = req.body;
@@ -15,7 +18,7 @@ const checkCreateBrand = async (req, res, next) => {
     const checkName = await _Category.findOne({name});
 
     if (checkId || checkName) {
-        return next(createError.Unauthorized("Category already exists!"));
+        throw new BadRequestError('Danh mục sản phẩm này đã tồn tại');
     }
 
     next();

@@ -18,75 +18,78 @@ const {
     verifyAccessToken,
     authPage
 } = require('../middlewares/jwt.middleware');
+const {
+    asyncHandler
+} = require('../middlewares');
 
 const router = express.Router();
 
-router.get(
-    '/admin/get-all-payments', 
+// admin get all payments
+router.get('/admin/get-all-payments', 
     [
-        verifyAccessToken, 
-        authPage(['Admin'])
+        asyncHandler(verifyAccessToken), 
+        asyncHandler(authPage(['Admin']))
     ], 
-    getAllPayments
+    asyncHandler(getAllPayments)
 );
-router.get(
-    '/admin/history', 
+// admin get all history payments
+router.get('/admin/history', 
     [
-        verifyAccessToken, 
-        authPage(['Admin'])
+        asyncHandler(verifyAccessToken), 
+        asyncHandler(authPage(['Admin']))
     ], 
-    getAllHistoryPayments
+    asyncHandler(getAllHistoryPayments)
 );
-router.get(
-    '/user/:id/get-payments-by-id', 
+// user get all payments
+router.get('/user/:id/get-payments-by-id', 
     [
-        verifyAccessToken
+        asyncHandler(verifyAccessToken)
     ], 
-    getPaymentsByIdUser
+    asyncHandler(getPaymentsByIdUser)
 );
-router.get(
-    '/user/:id/get-history-payments-by-id', 
+// user get all history payments
+router.get('/user/:id/get-history-payments-by-id', 
     [
-        verifyAccessToken
+        asyncHandler(verifyAccessToken)
     ], 
-    getHistoryPaymentsByIdUser
+    asyncHandler(getHistoryPaymentsByIdUser)
 );
-router.post(
-    '/user/:id/send-payment', 
+// user send payment
+router.post('/user/:id/send-payment', 
     [
-        verifyAccessToken
+        asyncHandler(verifyAccessToken)
     ], 
-    paymentCart
+    asyncHandler(paymentCart)
 );
-router.delete(
-    '/user/:id/cancel-payment', 
+// user cancel payment
+router.delete('/user/:id/cancel-payment', 
     [
-        verifyAccessToken
+        asyncHandler(verifyAccessToken)
     ], 
-    cancelPayment
+    asyncHandler(cancelPayment)
 );
-router.delete(
-    '/admin/:id/cancel-payment', 
+// admin cancel payment
+router.delete('/admin/:id/cancel-payment', 
     [
-        verifyAccessToken, 
-        authPage(['Admin'])
+        asyncHandler(verifyAccessToken), 
+        asyncHandler(authPage(['Admin']))
     ], 
-    cancelPaymentByAdmin
+    asyncHandler(cancelPaymentByAdmin)
 );
-router.post(
-    '/admin/:id/confirm-payment', 
+// admin confirm payment
+router.post('/admin/:id/confirm-payment', 
     [
-        verifyAccessToken, 
-        authPage(['Admin'])
+        asyncHandler(verifyAccessToken), 
+        asyncHandler(authPage(['Admin']))
     ], 
-    confirmPayment
+    asyncHandler(confirmPayment)
 );
-router.get(
-    '/:id', 
+// get payment by id
+router.get('/:id', 
     [
-        verifyAccessToken
+        asyncHandler(verifyAccessToken)
     ], 
-    getPaymentById
+    asyncHandler(getPaymentById)
 );
 
 // export module

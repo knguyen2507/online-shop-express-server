@@ -24,6 +24,13 @@ const _Otp = require('../models/otp.model');
 const _BlackList = require('../models/blackList.model');
 // utils
 const { getData } = require('../utils');
+// core
+const {
+    BadRequestError,
+    InternalServerError,
+    UnauthorizedError,
+    TooManyRequest
+} = require('../core/error.res');
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -46,24 +53,21 @@ const sendMail = async ({email, otp, subject}) => {
             accessToken: accessToken
         }
     });
+    if (transport) throw new InternalServerError();
     // send mail with defined transport object
-    await transport.sendMail({
+    const sendmail = await transport.sendMail({
         from: '"Cửa hàng Nguyên Phát" <np.appliancestore@gmail.com>', // sender address
         to: email, // list of receivers
         subject: subject, // Subject line
         text: `Bạn nhận được email từ ${email}`, // plain text body
         html: `<b>Xin chào ,</b><br><p>Bạn vừa nhận được mã OTP xác nhận tại Cửa hàng Nguyên Phát</p><br><p>${otp}</p>` // html body
     });
+    if (sendmail) throw new InternalServerError();
 };
 // get all users
 const get_all_users = async () => {
     const users = await _User.find({});
-    if (users.length === 0) {
-        return {
-            code: 500,
-            message: "Internal Server Error"
-        }
-    }
+    if (users.length === 0) throw new InternalServerError();
     return {
         code: 200,
         metadata: {
@@ -79,12 +83,7 @@ const get_all_users = async () => {
 // get user by id
 const get_user_by_id = async ({id}) => {
     const user = await _User.findOne({_id: id});
-    if (!user) {
-        return {
-            code: 500,
-            message: "Internal Server Error"
-        }
-    }
+    if (!user) throw new InternalServerError();
     
     return {
         code: 200,
@@ -99,12 +98,7 @@ const get_user_by_id = async ({id}) => {
 // admin get user by id
 const get_user_by_admin = async ({id}) => {
     const user = await _User.findOne({_id: id});
-    if (!user) {
-        return {
-            code: 500,
-            message: "Internal Server Error"
-        }
-    }
+    if (!user) throw new InternalServerError();
     
     return {
         code: 200,
@@ -120,20 +114,10 @@ const get_user_by_admin = async ({id}) => {
 const login = async ({us, pwd}) => {
     // find user by username
     const user = await _User.findOne({username: us});
-    if (!user) {
-        return {
-            code: 403,
-            message: "Wrong username or password"
-        }
-    }
+    if (!user) throw new BadRequestError('Sai tài khoản hoặc mật khẩu')
     // check password is valid
     const isValid = await bcrypt.compare(pwd, user.password);
-    if (!isValid) {
-        return {
-            code: 403,
-            message: "Wrong username or password"
-        }
-    }
+    if (!isValid) throw new BadRequestError('Sai tài khoản hoặc mật khẩu')
     // get token
     const accessToken = await signAccessToken(user._id);
     const refreshToken = await signRefreshToken(user._id);
@@ -148,7 +132,7 @@ const login = async ({us, pwd}) => {
             refreshToken,
             accessToken
         },
-        message: `${user.name} Login Successfully`
+        message: `${user.name} Đăng nhập thành công`
     }
 
 };
@@ -156,12 +140,7 @@ const login = async ({us, pwd}) => {
 const forgot_pasword = async ({ email }) => {
     // check email in blacklist
     const checkEmail = await _BlackList.findOne({email});
-    if (checkEmail) {
-        return {
-            code: 400,
-            message: "email in Blacklist"
-        }
-    }
+    if (checkEmail) throw new BadRequestError('Email này đã bị chặn')
     // check limit OTP generate
     const listOtp = await _Otp.find({email});
     if (listOtp.length > 2) {
@@ -170,10 +149,7 @@ const forgot_pasword = async ({ email }) => {
             await _Otp.deleteMany({ email });
             await _BlackList.create({ email });
 
-            return {
-                code: 429,
-                message: "over limit sending otp"
-            }
+            throw new TooManyRequest('Vượt quá giới hạn gửi OTP')
         }
     }
     // generate otp
@@ -203,12 +179,7 @@ const forgot_pasword = async ({ email }) => {
 const password_verify_otp = async ({otp, password, email}) => {
     // check email in Otps
     const listOtp = await _Otp.find({email});
-    if (!listOtp.length) {
-        return {
-            code: 404,
-            message: 'Expired OTP!'
-        }
-    }
+    if (!listOtp.length) throw new UnauthorizedError('OTP hết hạn')
     // get last otp
     const lastOtp = listOtp[listOtp.length - 1];
     // check otp is valid
@@ -218,17 +189,11 @@ const password_verify_otp = async ({otp, password, email}) => {
             await _BlackList.create({ email });
 
             await _Otp.deleteMany({ email });
-            return {
-                code: 429,
-                message: "over limit entering otp"
-            }
+            throw new TooManyRequest('Quá giới hạn nhập OTP')
         }
         // count the number of wrong entering otp
         await _Otp.updateOne({otp: lastOtp.otp}, {$set:{wrongs: lastOtp.wrongs+1}});
-        return {
-            code: 401,
-            message: 'Invalid Otp!'
-        }
+        throw new UnauthorizedError('Sai OTP')
     } 
     if (isValid && email === lastOtp.email) {
         // hash password
@@ -240,7 +205,7 @@ const password_verify_otp = async ({otp, password, email}) => {
 
         return {
             code: 201,
-            message: "New password successfully created"
+            message: "Tạo mới mật khẩu thành công"
         }
     }
 }
@@ -251,7 +216,7 @@ const logout = ({ id }) => {
     
     return {
         code: 201,
-        message: `Logout Successfully!`
+        message: `Đăng xuất thành công`
     }
 };
 // register guest account
@@ -260,12 +225,7 @@ const sign_up_guest = async ({
 }) => {
     // check email in blacklist
     const checkEmail = await _BlackList.findOne({email});
-    if (checkEmail) {
-        return {
-            code: 400,
-            message: "email in Blacklist"
-        }
-    }
+    if (checkEmail) throw new BadRequestError('Email này đã bị chặn')
     // check limit OTP generate
     const listOtp = await _Otp.find({email});
     if (listOtp.length > 2) {
@@ -274,10 +234,7 @@ const sign_up_guest = async ({
             await _Otp.deleteMany({ email });
             await _BlackList.create({ email });
 
-            return {
-                code: 429,
-                message: "over limit sending otp"
-            }
+            throw new TooManyRequest('Vượt quá giới hạn gửi OTP')
         }
     }
     // generate otp
@@ -307,12 +264,7 @@ const sign_up_guest = async ({
 const register_verify_otp = async ({otp, name, username, password, email}) => {
     // check email in Otps
     const listOtp = await _Otp.find({email});
-    if (!listOtp.length) {
-        return {
-            code: 404,
-            message: 'Expired OTP!'
-        }
-    }
+    if (!listOtp.length) throw new UnauthorizedError('OTP hết hạn')
     // get last otp
     const lastOtp = listOtp[listOtp.length - 1];
     // check otp is valid
@@ -322,17 +274,12 @@ const register_verify_otp = async ({otp, name, username, password, email}) => {
             await _BlackList.create({ email });
             // deleteMany Otp in Data
             await _Otp.deleteMany({ email });
-            return {
-                code: 429,
-                message: "over limit entering otp"
-            }
+
+            throw new TooManyRequest('Quá giới hạn nhập OTP')
         }
         // count the number of wrong entering otp
         await _Otp.updateOne({otp: lastOtp.otp}, {$set:{wrongs: lastOtp.wrongs+1}});
-        return {
-            code: 401,
-            message: 'Invalid Otp!'
-        }
+        throw new UnauthorizedError('Sai OTP')
     } 
     if (isValid && email === lastOtp.email) {
         // hash password
@@ -361,7 +308,7 @@ const register_verify_otp = async ({otp, name, username, password, email}) => {
 
         return {
             code: 201,
-            message: "Your account has been successfully created",
+            message: "Tài khoản của bạn đã được tạo thành công",
             metadata: {
                 user: getData({
                     fields: ['_id', 'name', 'email', 'role'],
@@ -397,37 +344,27 @@ const create_user_by_admin = async ({
 
     return {
         code: 201,
-        message: "Your account has been successfully created",
+        message: "Tài khoản được tạo thành công",
         metadata: user
     }
 };
 // delete user
 const delete_user = async ({id}) => {
     const user = await _User.findOne({_id: id});
-    if (!user) {
-        return {
-            code: 500,
-            message: "Internal Server Error"
-        }
-    }
+    if (!user) throw new InternalServerError();
 
     await _User.deleteOne({_id: id});
     await _Cart.deleteOne({id});
     client.del(id.toString());
     return {
         code: 201,
-        message: "User delete Successfully!"
+        message: "Tài khoản đã được xóa!"
     }
 };
 // change password
 const change_password = async ({id, password}) => {
     const user = await _User.findOne({_id: id});
-    if (!user) {
-        return {
-            code: 500,
-            message: "Internal Server Error"
-        }
-    }
+    if (!user) throw new InternalServerError();
     // hash password
     const hashPw = await bcrypt.hash(password, 10);
 
@@ -435,7 +372,7 @@ const change_password = async ({id, password}) => {
 
     return {
         code: 201,
-        message: "password has been changed"
+        message: "Mật khẩu đã được thay đổi"
     }
 }
 

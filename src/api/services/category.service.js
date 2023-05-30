@@ -3,16 +3,15 @@
 // models
 const _Product = require('../models/product.model');
 const _Category = require('../models/category.model');
+// core
+const {
+    InternalServerError
+} = require('../core/error.res');
 
 // get all categories
 const get_all_categories = async () => {
     const categories = await _Category.find({});
-    if (!categories) {
-        return {
-            code: 500,
-            message: "Internal Server Error"
-        }
-    }
+    if (!categories) throw new InternalServerError();
     return {
         code: 200,
         metadata: {
@@ -23,12 +22,6 @@ const get_all_categories = async () => {
 // get product by category
 const get_product_by_category = async ({idCategory}) => {
     const products = await _Product.find({idCategory: idCategory});
-    if (products.length === 0) {
-        return {
-            code: 401,
-            message: "Category not exist in database!"
-        }
-    }
     return {
         code: 200,
         metadata: {
@@ -39,12 +32,7 @@ const get_product_by_category = async ({idCategory}) => {
 // get category by name 
 const get_category_by_name = async ({id}) => {
     const category = await _Category.findOne({id});
-    if (!category) {
-        return {
-            code: 401,
-            message: "Category not exist in database!"
-        }
-    }
+    if (!category) throw new InternalServerError();
     return {
         code: 200,
         metadata: {
@@ -56,26 +44,21 @@ const get_category_by_name = async ({id}) => {
 const create_category = async ({id, name}) => {
     const newCategory = {id, name};
 
-    const category = await _Category.create(newCategory);
+    await _Category.create(newCategory);
 
     return {
         code: 201,
-        message: "Category has been successfully created"
+        message: `Danh mục ${name} tạo mới thành công`
     }
 };
 // delete category
 const delete_category = async ({id}) => {
     const category = await _Category.findOne({id});
-    if (!category) {
-        return {
-            code: 500,
-            message: "Internal Server Error"
-        }
-    }
+    if (!category) throw new InternalServerError();
     await _Category.deleteOne({id});
     return {
         code: 201,
-        message: "Category delete Successfully!"
+        message: `Danh mục ${category.name} xóa thành công`
     }
 }
 

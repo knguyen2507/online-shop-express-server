@@ -12,22 +12,29 @@ const {
     cancel_payment_by_admin,
     confirm_payment
 } = require('../services/payment.service');
+// core
+const {
+    OK
+} = require('../core/success.res');
+const {
+    UnauthorizedError
+} = require('../core/error.res');
 
 // get all payments
 const getAllPayments = async (req, res) => {
     const {code, metadata, message} = await get_all_payments({});
     
-    return res.status(code).json({
-        code, metadata, message
-    });
+    new OK ({
+        code, message, metadata
+    }).send(res);
 };
 // get all history payments
 const getAllHistoryPayments = async (req, res) => {
     const {code, metadata, message} = await get_all_history_payments({});
     
-    return res.status(code).json({
-        code, metadata, message
-    });
+    new OK ({
+        code, message, metadata
+    }).send(res);
 };
 // get payment by id
 const getPaymentById = async (req, res) => {
@@ -35,58 +42,46 @@ const getPaymentById = async (req, res) => {
 
     const {code, metadata, message} = await get_payment_by_id({id, idUser: req.user_id});
     
-    return res.status(code).json({
-        code, metadata, message
-    });
+    new OK ({
+        code, message, metadata
+    }).send(res);
 };
 // get payments by id user
 const getPaymentsByIdUser = async (req, res) => {
     const id = req.params.id;
 
-    if (id !== req.user_id) {
-        return res.status(401).json({
-            code: 401, message: "You does not have access!"
-        });
-    }
+    if (id !== req.user_id) throw new UnauthorizedError('Không có quyền truy cập');
 
     const {code, metadata, message} = await get_payments_by_id_user({id});
     
-    return res.status(code).json({
-        code, metadata, message
-    });
+    new OK ({
+        code, message, metadata
+    }).send(res);
 };
 // get history payments by id user
 const getHistoryPaymentsByIdUser = async (req, res) => {
     const id = req.params.id;
 
-    if (id !== req.user_id) {
-        return res.status(401).json({
-            code: 401, message: "You does not have access!"
-        });
-    }
+    if (id !== req.user_id) throw new UnauthorizedError('Không có quyền truy cập');
 
     const {code, metadata, message} = await get_history_payments_by_id_user({id});
     
-    return res.status(code).json({
-        code, metadata, message
-    });
+    new OK ({
+        code, message, metadata
+    }).send(res);
 };
 // customer request payment
 const paymentCart = async (req, res) => {
     const id = req.params.id;
     const carts = req.body.carts;
 
-    if (id !== req.user_id) {
-        return res.status(401).json({
-            code: 401, message: "You does not have access!"
-        });
-    }
+    if (id !== req.user_id) throw new UnauthorizedError('Không có quyền truy cập')
 
     const {code, message} = await payment_cart({id, carts});
 
-    return res.status(code).json({
+    new OK ({
         code, message
-    });
+    }).send(res);
 };
 // customer cancel payment
 const cancelPayment = async (req, res) => {
@@ -94,9 +89,9 @@ const cancelPayment = async (req, res) => {
 
     const {code, message} = await cancel_payment({id, idUser: req.user_id});
 
-    return res.status(code).json({
+    new OK ({
         code, message
-    });
+    }).send(res);
 };
 // admin cancel payment
 const cancelPaymentByAdmin = async (req, res) => {
@@ -104,9 +99,9 @@ const cancelPaymentByAdmin = async (req, res) => {
 
     const {code, message} = await cancel_payment_by_admin({id: id});
 
-    return res.status(code).json({
+    new OK ({
         code, message
-    });
+    }).send(res);
 };
 // confirm a payment
 const confirmPayment = async (req, res) => {
@@ -114,9 +109,9 @@ const confirmPayment = async (req, res) => {
 
     const {code, message} = await confirm_payment({id});
 
-    return res.status(code).json({
+    new OK ({
         code, message
-    });
+    }).send(res);
 };
 
 // export module

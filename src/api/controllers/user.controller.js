@@ -16,14 +16,18 @@ const {
     delete_user,
     change_password
 } = require('../services/user.service');
+// core
+const {
+    OK, CREATED
+} = require('../core/success.res');
 
 // get all users
 const getAllUsers = async (req, res) => {
     const {code, metadata, message} = await get_all_users({});
 
-    return res.status(code).json({
-        code, metadata, message
-    })
+    new OK ({
+        code, message, metadata
+    }).send(res);
 };
 // get user by id
 const getUserById = async (req, res) => {
@@ -35,9 +39,9 @@ const getUserById = async (req, res) => {
     }; 
     const {code, metadata, message} = await get_user_by_id({id});
 
-    return res.status(code).json({
-        code, metadata, message
-    })
+    new OK ({
+        code, message, metadata
+    }).send(res);
 };
 // admin get user by id
 const getUserByAdmin = async (req, res) => {
@@ -45,9 +49,9 @@ const getUserByAdmin = async (req, res) => {
 
     const {code, metadata, message} = await get_user_by_admin({id});
 
-    return res.status(code).json({
-        code, metadata, message
-    })
+    new OK ({
+        code, message, metadata
+    }).send(res);
 };
 // login
 const logIn = async (req, res) => {
@@ -61,18 +65,18 @@ const logIn = async (req, res) => {
         })
     }
 
-    return res.status(code).json({
-        code, metadata, message
-    })
+    new OK ({
+        code, message, metadata
+    }).send(res);
 };
 // create new password
 const forgotPassword = async (req, res) => {
     const email = req.body.email;
     const { code, message, metadata } = await forgot_pasword({email});
 
-    return res.status(code).json({
+    new OK ({
         code, message, metadata
-    })
+    }).send(res);
 };
 // password verify otp 
 const passwordVerifyOtp = async (req, res) => {
@@ -86,27 +90,27 @@ const passwordVerifyOtp = async (req, res) => {
         otp, password, email
     });
 
-    return res.status(code).json({
+    new CREATED ({
         code, message
-    });
+    }).send(res);
 };
 // Log out
 const logOut = async (req, res) => {
     const id = req.payload.id;
     const { code, message } = await logout({id});
 
-    return res.status(code).json({
+    new OK ({
         code, message
-    })
+    }).send(res);
 };
 // register guest account
 const signUpGuest = async (req, res) => {
     const email = req.body.email;
     const { code, message, metadata } = await sign_up_guest({email});
 
-    return res.status(code).json({
+    new OK ({
         code, message, metadata
-    })
+    }).send(res);
 };
 // verify otp
 const RegisterVerifyOtp = async (req, res) => {
@@ -122,9 +126,9 @@ const RegisterVerifyOtp = async (req, res) => {
         otp, name, username, password, email
     });
 
-    return res.status(code).json({
-        code, metadata, message
-    });
+    new CREATED ({
+        code, message, metadata
+    }).send(res);
 };
 // create user by admin rights
 const createUserByAdmin = async (req, res) => {
@@ -135,9 +139,9 @@ const createUserByAdmin = async (req, res) => {
         code, message, metadata 
     } = await create_user_by_admin({name, username, password, email, role});
 
-    return res.status(code).json({
+    new CREATED ({
         code, message, metadata
-    })
+    }).send(res);
 
 };
 // delete user
@@ -146,9 +150,9 @@ const deleteUser = async (req, res) => {
 
     const { code, message } = await delete_user({id});
 
-    return res.status(code).json({
+    new OK ({
         code, message
-    })
+    }).send(res);
 }
 // change password
 const changePassword = async (req, res) => {
@@ -157,9 +161,9 @@ const changePassword = async (req, res) => {
 
     const { code, message } = await change_password({id, password});
 
-    return res.status(code).json({
+    new OK ({
         code, message
-    })
+    }).send(res);
 }
 
 // export module
