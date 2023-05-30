@@ -2,7 +2,8 @@
 
 const { 
     ref,
-    uploadBytesResumable 
+    uploadBytesResumable,
+    getDownloadURL 
 } = require('firebase/storage');
 // configs
 const { storage } = require('../configs/config.storedFile');
