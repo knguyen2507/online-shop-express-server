@@ -48,6 +48,8 @@ const createProduct = async (req, res) => {
         id, name, qty, category, brand, price, details
     } = req.body;
 
+    let firebase = '';
+
     const image = `uploads/products/${id}/${req.file.originalname}`;
 
     if (storage !== false) {
@@ -56,11 +58,14 @@ const createProduct = async (req, res) => {
             contentType: req.file.mimetype,
         };
         // Upload the file in the bucket storage
-        await uploadBytesResumable(storageRef, req.file.buffer, data);
+        const snapshot = await uploadBytesResumable(storageRef, req.file.buffer, data);
+
+        // Grab the public url
+        firebase = await getDownloadURL(snapshot.ref);
     }
 
     const {code, message} = await create_product({
-        id, name, qty, category, brand, price, image, details
+        id, name, qty, category, brand, price, image, details, firebase
     });
 
     return res.status(code).json({

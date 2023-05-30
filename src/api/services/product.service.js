@@ -83,9 +83,9 @@ const search_product = async ({key}) => {
     }
 }
 // create new product
-const create_product = async ({id, name, qty, category, brand, price, image, details}) => {
+const create_product = async ({id, name, qty, category, brand, price, image, details, firebase}) => {
     const newProduct = {
-        id, name, qty, category, brand, price, image, details
+        id, name, qty, category, brand, price, image, details, firebase
     };
 
     const product = await _Product.create(newProduct);
